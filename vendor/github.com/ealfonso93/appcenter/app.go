@@ -105,6 +105,25 @@ func (a App) Groups(name string) (Group, error) {
 	return getResponse, nil
 }
 
+// All Groups...
+func (a App) AllGroups() ([]Group, error) {
+	var (
+		getURL      = fmt.Sprintf("%s/v0.1/apps/%s/%s/distribution_groups", baseURL, a.owner, a.name)
+		getResponse []Group
+	)
+
+	statusCode, err := a.client.jsonRequest(http.MethodGet, getURL, nil, &getResponse)
+	if err != nil {
+		return []Group{}, err
+	}
+
+	if statusCode != http.StatusOK {
+		return []Group{}, fmt.Errorf("invalid status code: %d, url: %s, body: %v", statusCode, getURL, getResponse)
+	}
+
+	return getResponse, nil
+}
+
 // Stores ...
 func (a App) Stores(name string) (Store, error) {
 	var (
