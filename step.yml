@@ -122,6 +122,16 @@ inputs:
       description: Enable verbose logs
       value_options: ["no", "yes"]
       is_required: true
+  - all_distribution_groups: "no"
+    opts:
+      title: All distribution groups
+      summary: Distribute the app to all user groups on that app.
+      description: |-
+        Distribute the app to all user groups on that app. Enabling this options makes it ignore distribution_group.
+
+        Distribution of AAB is supported only for Google Play store deployment: https://docs.microsoft.com/en-us/appcenter/distribution/uploading#android
+      value_options: ["no", "yes"]
+      is_required: true
 
 outputs:
   - APPCENTER_DEPLOY_STATUS:

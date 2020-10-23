@@ -42,6 +42,7 @@ workflows:
           - owner_name: $APPCENTER_APP_OWNER
           - app_name: $APPCENTER_APP_NAME
           - debug: "yes"
+          - all_distribution_groups: "no"
           - distribution_group: |-
               Collaborators
               Public

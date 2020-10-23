@@ -24,6 +24,7 @@ type config struct {
 	MappingPath        string          `env:"mapping_path"`
 	ReleaseNotes       string          `env:"release_notes"`
 	NotifyTesters      bool            `env:"notify_testers,required"`
+	DistributeAllGroup bool            `env:"all_distribution_groups"`
 	DistributionGroup  string          `env:"distribution_group"`
 	DistributionStore  string          `env:"distribution_store"`
 	DistributionTester string          `env:"distribution_tester"`
@@ -81,26 +82,43 @@ func main() {
 
 	var publicGroup string
 
-	for _, groupName := range strings.Split(cfg.DistributionGroup, "\n") {
-		groupName = strings.TrimSpace(groupName)
-
-		if len(groupName) == 0 {
-			continue
-		}
-
-		log.Printf("- %s", groupName)
-
-		group, err := app.Groups(groupName)
+	if cfg.DistributeAllGroup {
+		groups, err := app.AllGroups()
 		if err != nil {
-			failf("Failed to fetch group with name: (%s), error: %s", groupName, err)
+			failf("Failed to fetch groups, error: %v", err)
 		}
 
-		if err := release.AddGroup(group, cfg.Mandatory, cfg.NotifyTesters); err != nil {
-			failf("Failed to add group(%s) to the release, error: %s", groupName, err)
-		}
+		for _, group := range groups {
+			if err := release.AddGroup(group, cfg.Mandatory, cfg.NotifyTesters); err != nil {
+				failf("Failed to add group(%s) to the release, error: %s", group.DisplayName, err)
+			}
 
-		if group.IsPublic {
-			publicGroup = groupName
+			if group.IsPublic {
+				publicGroup = group.DisplayName
+			}
+		}
+	} else {
+		for _, groupName := range strings.Split(cfg.DistributionGroup, "\n") {
+			groupName = strings.TrimSpace(groupName)
+
+			if len(groupName) == 0 {
+				continue
+			}
+
+			log.Printf("- %s", groupName)
+
+			group, err := app.Groups(groupName)
+			if err != nil {
+				failf("Failed to fetch group with name: (%s), error: %s", groupName, err)
+			}
+
+			if err := release.AddGroup(group, cfg.Mandatory, cfg.NotifyTesters); err != nil {
+				failf("Failed to add group(%s) to the release, error: %s", groupName, err)
+			}
+
+			if group.IsPublic {
+				publicGroup = groupName
+			}
 		}
 	}
 
