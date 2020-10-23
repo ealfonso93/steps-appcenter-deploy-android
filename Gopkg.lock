@@ -3,22 +3,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:80a6a3c53c3f95b473e9bc7e400a1760e8e2c2320f939bd05717b513c87f851d"
-  name = "github.com/bitrise-io/appcenter"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "76bacf2fef28c04bf42e31a8c0f953f6d6282445"
-
-[[projects]]
-  branch = "master"
-  digest = "1:89562e1ecde606efbc12f60b41582279cccea8f4d39b31290e2d64bd1f08ee29"
+  digest = "1:ba6694e16cc02ad534ba0e2443323379159c978bbba876b01a7286c326cafeb8"
   name = "github.com/bitrise-io/go-steputils"
   packages = [
     "stepconf",
     "tools",
   ]
   pruneopts = "UT"
-  revision = "3c98d95a94d51624a26e99419d0fc03d2aab0055"
+  revision = "03ae3a6ded35c5e8aed0058ec270e3494d242d17"
 
 [[projects]]
   branch = "master"
@@ -34,16 +26,24 @@
     "pointers",
   ]
   pruneopts = "UT"
-  revision = "5067a2a682f21030f379f88e853b9e0734a24516"
+  revision = "6cc2aa4d248adef509996ac484bffd38856ddf80"
+
+[[projects]]
+  branch = "improvement/add_all_dist_groups"
+  digest = "1:88cb239bc4627dac4a2276bdb40a414e3c86581b55834fc5163ec4436896ad75"
+  name = "github.com/ealfonso93/appcenter"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6807a0d34816c74cf47f0e5eae9cd8d1c69c7d87"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/bitrise-io/appcenter",
     "github.com/bitrise-io/go-steputils/stepconf",
     "github.com/bitrise-io/go-steputils/tools",
     "github.com/bitrise-io/go-utils/log",
+    "github.com/ealfonso93/appcenter",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

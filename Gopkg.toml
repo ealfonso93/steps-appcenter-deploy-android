@@ -1,6 +1,6 @@
 [[constraint]]
-  branch = "master"
-  name = "github.com/bitrise-io/appcenter"
+  branch = "improvement/add_all_dist_groups"
+  name = "github.com/ealfonso93/appcenter"
 
 [[constraint]]
   branch = "master"

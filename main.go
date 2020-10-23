@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 
-	"github.com/bitrise-io/appcenter"
 	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-steputils/tools"
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/ealfonso93/appcenter"
 )
 
 const statusEnvKey = "APPCENTER_DEPLOY_STATUS"
@@ -174,8 +174,8 @@ func main() {
 		statusEnvKey:                    "success",
 		"APPCENTER_DEPLOY_INSTALL_URL":  release.InstallURL,
 		"APPCENTER_DEPLOY_DOWNLOAD_URL": release.DownloadURL,
-		"APPCENTER_RELEASE_PAGE_URL": fmt.Sprintf("https://appcenter.ms/orgs/%s/apps/%s/distribute/releases/%d", cfg.OwnerName, cfg.AppName, release.ID),
-		"APPCENTER_DEPLOY_RELEASE_ID": strconv.Itoa(release.ID),
+		"APPCENTER_RELEASE_PAGE_URL":    fmt.Sprintf("https://appcenter.ms/orgs/%s/apps/%s/distribute/releases/%d", cfg.OwnerName, cfg.AppName, release.ID),
+		"APPCENTER_DEPLOY_RELEASE_ID":   strconv.Itoa(release.ID),
 	}
 
 	if len(publicGroup) > 0 {
