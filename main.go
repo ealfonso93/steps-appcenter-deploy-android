@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bitrise-io/appcenter"
-	"github.com/bitrise-io/appcenter/client"
-	"github.com/bitrise-io/appcenter/model"
 	"github.com/bitrise-io/go-steputils/stepconf"
 	"github.com/bitrise-io/go-steputils/tools"
 	"github.com/bitrise-io/go-utils/log"
+	"github.com/electric-feel/appcenter"
+	"github.com/electric-feel/appcenter/client"
+	"github.com/electric-feel/appcenter/model"
 )
 
 const statusEnvKey = "APPCENTER_DEPLOY_STATUS"
@@ -27,6 +27,7 @@ type config struct {
 	ReleaseNotes       string          `env:"release_notes"`
 	NotifyTesters      bool            `env:"notify_testers,required"`
 	DistributionGroup  string          `env:"distribution_group"`
+	DistributeAllGroup bool            `env:"all_distribution_groups"`
 	DistributionStore  string          `env:"distribution_store"`
 	DistributionTester string          `env:"distribution_tester"`
 }
@@ -69,13 +70,6 @@ func main() {
 
 	releaseAPI := appcenter.CreateReleaseAPI(api, release, releaseOptions)
 
-	log.Infof("Setting distribution group(s)")
-
-	err = releaseAPI.AddGroupsToRelease(releaseOptions.GroupNames)
-	if err != nil {
-		failf("Failed to set groups on the release %s, groups: %s, error: %s", release.ID, releaseOptions.GroupNames, err)
-	}
-
 	if len(cfg.MappingPath) > 0 {
 		log.Infof("Uploading mapping file")
 		if err := releaseAPI.UploadSymbol(cfg.MappingPath); err != nil {
@@ -94,26 +88,49 @@ func main() {
 		fmt.Println()
 	}
 
-	log.Infof("Gatehering public group(s)")
+	log.Infof("Setting distribution group(s)")
 
 	var publicGroup []string
-	for _, groupName := range releaseOptions.GroupNames {
-		groupName = strings.TrimSpace(groupName)
-		if len(groupName) == 0 {
-			continue
-		}
-
-		log.Printf("- %s", groupName)
-
-		group, err := appAPI.Groups(groupName)
+	if cfg.DistributeAllGroup {
+		log.Infof("Gatehering all public groups")
+		groups, err := appAPI.AllGroups()
 		if err != nil {
-			failf("Failed to fetch group with name: (%s), error: %s", groupName, err)
+			failf("Failed to fetch groups, error: %s", err)
 		}
 
-		log.Debugf("%+v", group)
+		for _, group := range groups {
+			if err := releaseAPI.AddGroup(group); err != nil {
+				failf("Failed to add group(%s) to the release, error: %s", group.DisplayName, err)
+			}
 
-		if group.IsPublic {
-			publicGroup = append(publicGroup, groupName)
+			if group.IsPublic {
+				publicGroup = append(publicGroup, group.DisplayName)
+			}
+		}
+	} else {
+		log.Infof("Gatehering config public group(s)")
+		err = releaseAPI.AddGroupsToRelease(releaseOptions.GroupNames)
+		if err != nil {
+			failf("Failed to set groups on the release %s, groups: %s, error: %s", release.ID, releaseOptions.GroupNames, err)
+		}
+		for _, groupName := range releaseOptions.GroupNames {
+			groupName = strings.TrimSpace(groupName)
+			if len(groupName) == 0 {
+				continue
+			}
+
+			log.Printf("- %s", groupName)
+
+			group, err := appAPI.Groups(groupName)
+			if err != nil {
+				failf("Failed to fetch group with name: (%s), error: %s", groupName, err)
+			}
+
+			log.Debugf("%+v", group)
+
+			if group.IsPublic {
+				publicGroup = append(publicGroup, groupName)
+			}
 		}
 	}
 
