@@ -26,9 +26,6 @@ workflows:
     - APPCENTER_APP_OWNER: app-center-bot
     steps:
     - go-list:
-    - golint:
-    - errcheck:
-    - go-test:
     - script:
         title: Clean _tmp
         inputs:
@@ -57,6 +54,7 @@ workflows:
           - distribution_group: |-
               Collaborators
               Public
+          - all_distribution_groups: "no"
           - mapping_path: $MAPPING_PATH
           - distribution_tester: tooling.bot@bitrise.io
           - release_notes: Bitrise step test
